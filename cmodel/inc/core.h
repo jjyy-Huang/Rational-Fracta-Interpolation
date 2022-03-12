@@ -12,6 +12,9 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/opencv.hpp"
 
+#include "../inc/imgproc.h"
+#include "../inc/levelset.h"
+
 cv::Mat core(cv::Mat &img);
 
 #endif //CMODEL_CORE_H

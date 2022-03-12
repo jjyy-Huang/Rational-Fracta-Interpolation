@@ -13,7 +13,7 @@ int main() {
     cv::Mat img_read;
     cv::Mat img_H;
 
-    img_read = cv::imread("../../8.bmp");
+    img_read = cv::imread("../img/baby.bmp");
 
     cv::Mat img_L = downsample(img_read, scale, DIRECT);
 

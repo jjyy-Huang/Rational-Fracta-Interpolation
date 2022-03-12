@@ -27,7 +27,6 @@ enum channel_num{
 
 cv::Mat downsample(cv::Mat &origin, int scale, int method);
 
-void level_set(cv::Mat &block);
 
 void RGB2YCbCr(cv::Mat &src, cv::Mat &dst);
 cv::Mat splitYCbCr(cv::Mat &src, int index);

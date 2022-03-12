@@ -7,7 +7,6 @@
 
 #include "../inc/imgproc.h"
 
-#include "iostream"
 
 static void MatFormat_Int2Double(cv::Mat &src, cv::Mat &dst){
     src.convertTo(dst, CV_64FC1);
@@ -15,8 +14,8 @@ static void MatFormat_Int2Double(cv::Mat &src, cv::Mat &dst){
 
 // just use the IP core
 void RGB2YCbCr(cv::Mat &src, cv::Mat &dst){
-    for ( int i = 0; i < src.rows; i++ ) {
-        for ( int j = 0; j < src.cols; j++ ) {
+    for ( int i = 0; i < src.rows; ++i) {
+        for ( int j = 0; j < src.cols; ++j ) {
             dst.at<cv::Vec3b>(i, j)[0] = 16 +
                                          0.257 * (double_t) src.at<cv::Vec3b>(i, j)[2] +
                                          0.504 * (double_t) src.at<cv::Vec3b>(i, j)[1] +
@@ -46,8 +45,8 @@ cv::Mat downsample(cv::Mat &origin, int scale, int method){
     switch (method) {
         case DIRECT:
 
-            for ( int i = 0; i < origin.rows / scale; i++ ){
-                for ( int j = 0; j < origin.cols / scale; j++ ){
+            for ( int i = 0; i < origin.rows / scale; ++i ){
+                for ( int j = 0; j < origin.cols / scale; ++j ){
                     img.at<cv::Vec3b>(i, j)[0] = origin.at<cv::Vec3b>(scale * i, scale * j)[0];
                     img.at<cv::Vec3b>(i, j)[1] = origin.at<cv::Vec3b>(scale * i, scale * j)[1];
                     img.at<cv::Vec3b>(i, j)[2] = origin.at<cv::Vec3b>(scale * i, scale * j)[2];
@@ -67,9 +66,3 @@ cv::Mat downsample(cv::Mat &origin, int scale, int method){
     return img;
 }
 
-void level_set(cv::Mat &block){
-    cv::Mat tmp(block.rows, block.cols, CV_64FC1);
-    MatFormat_Int2Double(block, tmp);
-
-
-}
