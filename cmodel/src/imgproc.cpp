@@ -32,6 +32,22 @@ void RGB2YCbCr(cv::Mat &src, cv::Mat &dst){
     }
 }
 
+//  insert N rows/cols at the edge
+cv::Mat preProcess(cv::Mat &src, int num){
+    cv::Mat tmp(src.rows + num, src.cols + num, CV_8UC1);
+    for ( int i = 0; i < tmp.rows; ++i ){
+        for ( int j = 0; j < tmp.cols; ++j ){
+            int row, col;
+            if ( j < src.cols )     col = j;
+            else                    col = src.cols - 1;
+            if ( i < src.rows)      row = i;
+            else                    row = src.rows - 1;
+            tmp.at<int8_t>(i, j) = src.at<int8_t>(row, col);
+        }
+    }
+    return tmp;
+}
+
 cv::Mat splitYCbCr(cv::Mat &src, int index){
     cv::Mat channels[3];
     split(src,channels);
@@ -62,7 +78,26 @@ cv::Mat downsample(cv::Mat &origin, int scale, int method){
             cv::resize(origin, img, img.size(), 0, 0, cv::INTER_CUBIC);
             break;
     }
-
     return img;
+}
+//  check the downsampling method
+int checkImage(cv::Mat &GT, cv::Mat &LR){
+    for ( int i = 0; i < LR.rows; ++i ){
+        for ( int j = 0; j < LR.cols; ++j ){
+            if ( GT.at<cv::Vec3b>(4*i, 4*j)[0] != LR.at<cv::Vec3b>(i, j)[0] ){
+                std::cout << i << "," << j << std::endl;
+                return 1;
+            }
+            if ( GT.at<cv::Vec3b>(4*i, 4*j)[1] != LR.at<cv::Vec3b>(i, j)[1] ){
+                std::cout << i << "," << j << std::endl;
+                return 2;
+            }
+            if ( GT.at<cv::Vec3b>(4*i, 4*j)[2] != LR.at<cv::Vec3b>(i, j)[2] ){
+                std::cout << i << "," << j << std::endl;
+                return 3;
+            }
+        }
+    }
+    return 0;
 }
 

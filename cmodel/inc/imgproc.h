@@ -31,5 +31,8 @@ cv::Mat downsample(cv::Mat &origin, int scale, int method);
 void RGB2YCbCr(cv::Mat &src, cv::Mat &dst);
 cv::Mat splitYCbCr(cv::Mat &src, int index);
 
+cv::Mat preProcess(cv::Mat &src, int num);
+
+int checkImage(cv::Mat &GT, cv::Mat &LR);
 
 #endif //CMODEL_IMGPROC_H

@@ -14,6 +14,7 @@
 
 #include "../inc/imgproc.h"
 #include "../inc/levelset.h"
+#include "../inc/upsampling.h"
 
 cv::Mat core(cv::Mat &img);
 
