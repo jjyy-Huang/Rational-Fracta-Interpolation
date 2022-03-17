@@ -20,14 +20,27 @@ void RGB2YCbCr(cv::Mat &src, cv::Mat &dst){
                                          0.257 * (double_t) src.at<cv::Vec3b>(i, j)[2] +
                                          0.504 * (double_t) src.at<cv::Vec3b>(i, j)[1] +
                                          0.098 * (double_t) src.at<cv::Vec3b>(i, j)[0];
-            dst.at<cv::Vec3b>(i, j)[1] = 128 +
-                                         -0.148 * (double_t) src.at<cv::Vec3b>(i, j)[2] +
+            dst.at<cv::Vec3b>(i, j)[1] = 128 -
+                                         0.148 * (double_t) src.at<cv::Vec3b>(i, j)[2] +
                                          0.291 * (double_t) src.at<cv::Vec3b>(i, j)[1] +
                                          0.439 * (double_t) src.at<cv::Vec3b>(i, j)[0];
             dst.at<cv::Vec3b>(i, j)[2] = 128 +
                                          0.439 * (double_t) src.at<cv::Vec3b>(i, j)[2] -
-                                         0.368 * (double_t) src.at<cv::Vec3b>(i, j)[1] +
+                                         0.368 * (double_t) src.at<cv::Vec3b>(i, j)[1] -
                                          0.071 * (double_t) src.at<cv::Vec3b>(i, j)[0];
+        }
+    }
+}
+void YCbCr2RGB(cv::Mat &src, cv::Mat &dst){
+    for ( int i = 0; i < src.rows; ++i) {
+        for ( int j = 0; j < src.cols; ++j ) {
+            dst.at<cv::Vec3b>(i, j)[0] = (1.164 * (double_t)(src.at<cv::Vec3b>(i, j)[0] - 16) +
+                                            2.017 * (double_t)((src.at<cv::Vec3b>(i, j)[1] - 128)));
+            dst.at<cv::Vec3b>(i, j)[1] = (1.164 * (double_t)(src.at<cv::Vec3b>(i, j)[0] - 16) -
+                                            0.392 * (double_t)(src.at<cv::Vec3b>(i, j)[1] - 128) -
+                                              0.813 * (double_t)(src.at<cv::Vec3b>(i, j)[2] - 128));
+            dst.at<cv::Vec3b>(i, j)[2] = (1.164 * (double_t)(src.at<cv::Vec3b>(i, j)[0] - 16) +
+                                            1.596 * (double_t)(src.at<cv::Vec3b>(i, j)[2] - 128));
         }
     }
 }
@@ -52,6 +65,25 @@ cv::Mat splitYCbCr(cv::Mat &src, int index){
     cv::Mat channels[3];
     split(src,channels);
     return channels[index];
+}
+
+cv::Mat cutBlock(cv::Mat &src, int row, int col, int height, int width) {
+    cv::Mat dst(height, width, CV_64FC1);
+    for ( int i = 0; i < height; ++i ) {
+        for ( int j = 0; j < height; ++j ) {
+            dst.at<double_t>(i, j) = (double_t)src.at<uint8_t>(row + i, col + j);
+        }
+    }
+    return dst;
+}
+
+void mergeBlock(cv::Mat &block, cv::Mat &img_sr, int row, int col, int height, int width) {
+    for ( int i = 0; i < height; ++i ) {
+        for ( int j = 0; j < width; ++j ) {
+            img_sr.at<uint8_t>(row+i, col+j) = (uint8_t)block.at<double_t>(i, j);
+        }
+    }
+    return;
 }
 
 
