@@ -140,13 +140,6 @@ static cv::Mat calFIFs(cv::Mat &z, cv::Mat &s) {
                     double_t c10 =  (SQR(THETA(k)) * (BETAX(i, j) + (1 - THETA(k)) * GAMAX(i, j)) * ETA(t) * SQR(1 - ETA(t)) * ALPHAY(i, j)) / w;
                     double_t c11 = -(SQR(THETA(k)) * (BETAX(i, j) + (1 - THETA(k)) * GAMAX(i, j)) * SQR(ETA(t)) * (1 - ETA(t)) * BETAY(i, j)) / w;
 
-//                zz((i-1)*4+k,(j-1)*4+t)=s(i,j)*z(k,t) +
-//                 a00*(z(i,j)-s(i,j)*z(1,1)) + a10*(z(i+1,j)-s(i,j)*z(ppp,1)) + a01*(z(i,j+1)-s(i,j)*z(1,ppp)) + a11*(z(i+1,j+1)-s(i,j)*z(ppp,ppp)) ...
-//                + b00*((x(i+1)-x(i))*dx(i,j,x,ppp,z)  -s(i,j)*(x(ppp)-x(1))*dx(1,1,x,ppp,z))   + b10*((x(i+1)-x(i))*dx(i+1,j,x,ppp,z)-s(i,j)*(x(ppp)-x(1))*dx(ppp,1,x,ppp,z)) ...
-//                + b01*((x(i+1)-x(i))*dx(i,j+1,x,ppp,z)-s(i,j)*(x(ppp)-x(1))*dx(1,ppp,x,ppp,z)) + b11*((x(i+1)-x(i))*dx(i+1,j+1,x,ppp,z)-s(i,j)*(x(ppp)-x(1))*dx(ppp,ppp,x,ppp,z)) ...
-//                + c00*((y(j+1)-y(j))*dy(i,j,y,ppp,z)  -s(i,j)*(y(ppp)-y(1))*dy(1,1,y,ppp,z))   + c10*((y(j+1)-y(j))*dy(i+1,j,y,ppp,z)-s(i,j)*(y(ppp)-y(1))*dy(ppp,1,y,ppp,z))...
-//                + c01*((y(j+1)-y(j))*dy(i,j+1,y,ppp,z)-s(i,j)*(y(ppp)-y(1))*dy(1,ppp,y,ppp,z)) + c11*((y(j+1)-y(j))*dy(i+1,j+1,y,ppp,z)-s(i,j)*(y(ppp)-y(1))*dy(ppp,ppp,y,ppp,z));
-
                     fz.at<double_t>(i * 4 + k, j * 4 + t) = MAT(s, i, j) * MAT(z, k, t)
                             + a00 * (MAT(z, i, j) - MAT(s, i, j) * MAT(z, 0, 0))
                               + a10 * (MAT(z, i+1, j) - MAT(s, i, j) * MAT(z, N-1, 0))
@@ -167,42 +160,6 @@ static cv::Mat calFIFs(cv::Mat &z, cv::Mat &s) {
     }
     return fz;
 }
-
-//for i=1:n-1
-//    for k=1:4
-//        for j=1:m-1
-//            a=(x(i+1)-x(i))/(x(5)-x(1));
-//            b=(x(5)*x(i)-x(1)*x(i+1))/(x(5)-x(1));
-//            c=(y(j+1)-y(j))/(y(5)-y(1));
-//            d=(y(5)*y(j)-y(1)*y(j+1))/(y(5)-y(1));
-//            for t=1:4
-//                a00=((1-sita(k,x,n))^2 * (alpha0(i,j)+sita(k,x,n)*gama0(i,j))*(1-eta(t,y,m))^2 * (alpha(i,j)+eta(t,y,m)*gama(i,j))) /(((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//                a01=((1-sita(k,x,n))^2 * (alpha0(i,j)+sita(k,x,n)*gama0(i,j))*eta(t,y,m)^2 * (beta(i,j)+(1-eta(t,y,m))*gama(i,j)))/ (((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//                a10=(sita(k,x,n)^2 * (beta0(i,j)+(1-sita(k,x,n))*gama0(i,j))*(1-eta(t,y,m))^2 * (alpha(i,j)+eta(t,y,m)*gama(i,j)))/(((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//                a11=(sita(k,x,n)^2 * (beta0(i,j)+(1-sita(k,x,n))*gama0(i,j))*eta(t,y,m)^2 * (beta(i,j)+(1-eta(t,y,m))*gama(i,j)))/ (((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//
-//                b00=(sita(k,x,n) * (1-sita(k,x,n))^2 *alpha0(i,j)*(1-eta(t,y,m))^2 * (alpha(i,j)+eta(t,y,m)*gama(i,j))) /(((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//                b01=(sita(k,x,n) * (1-sita(k,x,n))^2 *alpha0(i,j)*eta(t,y,m)^2 * (beta(i,j)+(1-eta(t,y,m))*gama(i,j))) /(((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//                b10=-(sita(k,x,n)^2 * (1-sita(k,x,n)) *beta0(i,j)*(1-eta(t,y,m))^2 * (alpha(i,j)+eta(t,y,m)*gama(i,j))) /(((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//                b11=-(sita(k,x,n)^2 * (1-sita(k,x,n)) *beta0(i,j)* eta(t,y,m)^2 *(beta(i,j)+(1-eta(t,y,m))*gama(i,j))) /(((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//
-//                c00=((1-sita(k,x,n))^2* (alpha0(i,j)+sita(k,x,n)*gama0(i,j)) *eta(t,y,m) *(1-eta(t,y,m))^2*alpha(i,j)) / (((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//                c01=-((1-sita(k,x,n))^2*(alpha0(i,j)+sita(k,x,n)*gama0(i,j))* eta(t,y,m)^2* (1-eta(t,y,m))*beta(i,j)) /(((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//                c10=(sita(k,x,n)^2*(beta0(i,j)+(1-sita(k,x,n))*gama0(i,j)) * eta(t,y,m)*(1-eta(t,y,m))^2*alpha(i,j)) /(((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//                c11=-(sita(k,x,n)^2*(beta0(i,j)+(1-sita(k,x,n))*gama0(i,j)) * eta(t,y,m)^2 *(1-eta(t,y,m))*beta(i,j)) / (((1-sita(k,x,n))^2*alpha0(i,j)+sita(k,x,n)*(1-sita(k,x,n))*gama0(i,j)+sita(k,x,n)^2*beta0(i,j))*((1-eta(t,y,m))^2*alpha(i,j)+eta(t,y,m)*(1-eta(t,y,m))*gama(i,j)+eta(t,y,m)^2*beta(i,j)));
-//
-//
-//                xx((i-1)*4+t)=a*x(t)+b;
-//                yy((j-1)*4+t)=c*y(t)+d;
-//                zz((i-1)*4+k,(j-1)*4+t)=s(i,j)*z(k,t) + a00*(z(i,j)-s(i,j)*z(1,1)) + a10*(z(i+1,j)-s(i,j)*z(ppp,1)) + a01*(z(i,j+1)-s(i,j)*z(1,ppp)) + a11*(z(i+1,j+1)-s(i,j)*z(ppp,ppp)) ...
-//                + b00*((x(i+1)-x(i))*dx(i,j,x,ppp,z)  -s(i,j)*(x(ppp)-x(1))*dx(1,1,x,ppp,z))   + b10*((x(i+1)-x(i))*dx(i+1,j,x,ppp,z)-s(i,j)*(x(ppp)-x(1))*dx(ppp,1,x,ppp,z)) ...
-//                + b01*((x(i+1)-x(i))*dx(i,j+1,x,ppp,z)-s(i,j)*(x(ppp)-x(1))*dx(1,ppp,x,ppp,z)) + b11*((x(i+1)-x(i))*dx(i+1,j+1,x,ppp,z)-s(i,j)*(x(ppp)-x(1))*dx(ppp,ppp,x,ppp,z)) ...
-//                + c00*((y(j+1)-y(j))*dy(i,j,y,ppp,z)  -s(i,j)*(y(ppp)-y(1))*dy(1,1,y,ppp,z))   + c10*((y(j+1)-y(j))*dy(i+1,j,y,ppp,z)-s(i,j)*(y(ppp)-y(1))*dy(ppp,1,y,ppp,z))...
-//                + c01*((y(j+1)-y(j))*dy(i,j+1,y,ppp,z)-s(i,j)*(y(ppp)-y(1))*dy(1,ppp,y,ppp,z)) + c11*((y(j+1)-y(j))*dy(i+1,j+1,y,ppp,z)-s(i,j)*(y(ppp)-y(1))*dy(ppp,ppp,y,ppp,z));
-//            end
-//        end
-//    end
-//end
 
 cv::Mat upsampling(cv::Mat &block, bool isTexture) {
     cv::Mat s = initVerticalScalingFactor(block, isTexture);
