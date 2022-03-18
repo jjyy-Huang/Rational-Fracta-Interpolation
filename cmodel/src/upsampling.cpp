@@ -114,6 +114,7 @@ static void calIFS(double_t &a, double_t &b, double_t &c, double_t &d, int i, in
 
 //   4x4 -> 16x16
 static cv::Mat calFIFs(cv::Mat &z, cv::Mat &s) {
+    int flag = 0;
     cv::Mat fz = cv::Mat::zeros(17, 17, CV_64FC1);
     for ( int i = 0; i < N - 1; ++i ) {
         for ( int k = 0; k < N - 1; ++k ) {

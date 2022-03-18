@@ -16,6 +16,6 @@
 #include "../inc/levelset.h"
 #include "../inc/upsampling.h"
 
-cv::Mat core(cv::Mat &img);
+cv::Mat core(cv::Mat &img, int height, int width);
 
 #endif //CMODEL_CORE_H

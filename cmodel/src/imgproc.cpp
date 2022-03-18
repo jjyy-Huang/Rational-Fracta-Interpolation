@@ -17,30 +17,30 @@ void RGB2YCbCr(cv::Mat &src, cv::Mat &dst){
     for ( int i = 0; i < src.rows; ++i) {
         for ( int j = 0; j < src.cols; ++j ) {
             dst.at<cv::Vec3b>(i, j)[0] = 16 +
-                                         0.257 * (double_t) src.at<cv::Vec3b>(i, j)[2] +
-                                         0.504 * (double_t) src.at<cv::Vec3b>(i, j)[1] +
-                                         0.098 * (double_t) src.at<cv::Vec3b>(i, j)[0];
+                                         65.738/256 * (double_t) src.at<cv::Vec3b>(i, j)[2] +
+                                         129.057/256 * (double_t) src.at<cv::Vec3b>(i, j)[1] +
+                                         25.064/256 * (double_t) src.at<cv::Vec3b>(i, j)[0];
             dst.at<cv::Vec3b>(i, j)[1] = 128 -
-                                         0.148 * (double_t) src.at<cv::Vec3b>(i, j)[2] +
-                                         0.291 * (double_t) src.at<cv::Vec3b>(i, j)[1] +
-                                         0.439 * (double_t) src.at<cv::Vec3b>(i, j)[0];
+                                         37.945/256 * (double_t) src.at<cv::Vec3b>(i, j)[2] -
+                                         74.494/256 * (double_t) src.at<cv::Vec3b>(i, j)[1] +
+                                         112.439/256 * (double_t) src.at<cv::Vec3b>(i, j)[0];
             dst.at<cv::Vec3b>(i, j)[2] = 128 +
-                                         0.439 * (double_t) src.at<cv::Vec3b>(i, j)[2] -
-                                         0.368 * (double_t) src.at<cv::Vec3b>(i, j)[1] -
-                                         0.071 * (double_t) src.at<cv::Vec3b>(i, j)[0];
+                                         112.439/256 * (double_t) src.at<cv::Vec3b>(i, j)[2] -
+                                         94.154/256 * (double_t) src.at<cv::Vec3b>(i, j)[1] -
+                                         18.285/256 * (double_t) src.at<cv::Vec3b>(i, j)[0];
         }
     }
 }
 void YCbCr2RGB(cv::Mat &src, cv::Mat &dst){
     for ( int i = 0; i < src.rows; ++i) {
         for ( int j = 0; j < src.cols; ++j ) {
-            dst.at<cv::Vec3b>(i, j)[0] = (1.164 * (double_t)(src.at<cv::Vec3b>(i, j)[0] - 16) +
-                                            2.017 * (double_t)((src.at<cv::Vec3b>(i, j)[1] - 128)));
-            dst.at<cv::Vec3b>(i, j)[1] = (1.164 * (double_t)(src.at<cv::Vec3b>(i, j)[0] - 16) -
-                                            0.392 * (double_t)(src.at<cv::Vec3b>(i, j)[1] - 128) -
-                                              0.813 * (double_t)(src.at<cv::Vec3b>(i, j)[2] - 128));
-            dst.at<cv::Vec3b>(i, j)[2] = (1.164 * (double_t)(src.at<cv::Vec3b>(i, j)[0] - 16) +
-                                            1.596 * (double_t)(src.at<cv::Vec3b>(i, j)[2] - 128));
+            dst.at<cv::Vec3b>(i, j)[0] = (uint8_t)(1.164 * (double_t)(src.at<cv::Vec3b>(i, j)[0] - 16) +
+                                                    2.017 * (double_t)((src.at<cv::Vec3b>(i, j)[1] - 128)));
+            dst.at<cv::Vec3b>(i, j)[1] = (uint8_t)(1.164 * (double_t)(src.at<cv::Vec3b>(i, j)[0] - 16) -
+                                                    0.392 * (double_t)(src.at<cv::Vec3b>(i, j)[1] - 128) -
+                                                    0.813 * (double_t)(src.at<cv::Vec3b>(i, j)[2] - 128));
+            dst.at<cv::Vec3b>(i, j)[2] = (uint8_t)(1.164 * (double_t)(src.at<cv::Vec3b>(i, j)[0] - 16) +
+                                                    1.596 * (double_t)(src.at<cv::Vec3b>(i, j)[2] - 128));
         }
     }
 }
@@ -80,7 +80,11 @@ cv::Mat cutBlock(cv::Mat &src, int row, int col, int height, int width) {
 void mergeBlock(cv::Mat &block, cv::Mat &img_sr, int row, int col, int height, int width) {
     for ( int i = 0; i < height; ++i ) {
         for ( int j = 0; j < width; ++j ) {
-            img_sr.at<uint8_t>(row+i, col+j) = (uint8_t)block.at<double_t>(i, j);
+            uint8_t tmp = 0;
+            if ( block.at<double_t>(i, j) >= UINT8_MAX )    tmp = UINT8_MAX;
+            else if ( block.at<double_t>(i, j) <= 0 )       tmp = 0;
+            else                                            tmp = (uint8_t)block.at<double_t>(i, j);
+            img_sr.at<uint8_t>(row+i, col+j) = tmp;
         }
     }
     return;
